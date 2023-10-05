@@ -4,6 +4,7 @@ FROM node:18.0-alpine3.14 as build-stage
 
 WORKDIR /app
 
+# package.json 单独一层，可以最大程度利用 docker 缓存，避免不必要的 npm install
 COPY package.json .
 
 RUN npm install
