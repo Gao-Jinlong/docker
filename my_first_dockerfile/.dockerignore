@@ -1,0 +1,22 @@
+# docker 的 build 是在 docker 的守护进程（docker daemon）中完成的
+# build 时会将 dockerfile 和它的构建上下文（所在目录）打包发送给 docker daemon 来构建镜像
+# 镜像越小性能越好，所以可以通过配置 .dockerignore 来忽略不需要的文件
+
+# 忽略所有的 .md 文件
+*.md
+# 但是不包括 README.md
+!README.md
+# 忽略 node_modules 目录下的所有文件
+node_modules/
+# 忽略 a.txt, b.txt, c.txt
+[a-c].txt
+.vscode/
+.DS_Store
+.dockerignore
+
+.eslintignore
+.eslintrc
+.prettierrc
+.prettierignore
+
+#【注】还可以通过多段构建来减小镜像大小
