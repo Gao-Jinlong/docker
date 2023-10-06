@@ -7,6 +7,9 @@ export class AppController {
 
   @Get()
   getHello(): string {
+    const KB = 2 * 10 * 8;
+    const str = 'a'.repeat(KB);
+
     return this.appService.getHello();
   }
 }

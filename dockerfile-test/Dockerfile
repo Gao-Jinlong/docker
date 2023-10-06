@@ -24,6 +24,10 @@ WORKDIR /app
 
 RUN npm install --production
 
+# 安装 pm2 来管理 node 进程
+RUN npm install pm2 -g
+
 EXPOSE 3000
 
-CMD ["node", "/app/main.js"]
+# pm2-runtime 会自动监控 node 进程，如果进程挂了，会自动重启
+CMD ["pm2-runtime", "/app/main.js"]
