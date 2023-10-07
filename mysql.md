@@ -42,3 +42,63 @@ DQL 语句（Data Query Language）：数据查询语言，用来查询数据库
 DCL 语句（Data Control Language）：数据控制语言，用来定义数据库的访问权限和安全级别，及创建用户。关键字：grant、revoke 等。
 
 TCL 语句（Transaction Control Language）：事务控制语言，用来管理事务。关键字：commit、rollback 等。
+
+```sql
+
+CREATE TABLE student (
+	id INT PRIMARY KEY AUTO_INCREMENT COMMENT 'Id',
+    name VARCHAR(50) NOT NULL COMMENT '学生姓名',
+    gender VARCHAR(10) NOT NULL COMMENT '性别',
+    age INT NOT NULL COMMENT '年龄',
+    class VARCHAR(50) NOT NULL COMMENT '班级名',
+    score INT NOT NULL COMMENT ' 分数'
+) CHARSET=utf8mb4
+
+INSERT INTO student (name, gender, age, class, score) 
+VALUES
+	('张三', '男', 18, '一班', 90),
+    ('李四', '女', 19, '二班', 84),
+    ('王五', '男', 18, '三班', 92),
+    ('赵六', '男', 20, '一班', 88),
+    ('钱琪', '女', 18, '二班', 93),
+    ('孙跋', '女', 19, '三班', 89),
+    ('周酒', '男', 21, '一班', 80),
+    ('黄诗', '女', 20, '二班', 77),
+    ('刘诗怡', '女', 17, '三班', 82),
+    ('唐氏儿', '男', 19, '一班', 75),
+    ('宋十三', '男', 22, '二班', 79),
+    ('孔思思', '女', 20, '三班', 70),
+    ('王实物', '男', 21, '一班', 77),
+    ('邵石柳', '男', 22, '二班', 73),
+    ('徐诗琪', '女', 18, '三班', 82),
+    ('宗施巴', '男', 23, '一班', 76),
+    ('郑石臼', '女', 17, '二班', 84),
+    ('赵尔诗', '女', 16, '三班', 93);
+ 
+SELECT name as '姓名', age as '年龄', score as '成绩' FROM student WHERE age >=19 and gender='女';
+
+-- 姓王的同学 
+SELECT * FROM student WHERE name like '王%';
+-- in 指定合集 not in 排除合集
+SELECT * FROM student WHERE class not in ('一班', '二班');
+-- between and 指定区间
+SELECT * FROM student WHERE age between 18 and 20;
+-- 分页
+SELECT * FROM student LIMIT 0,5;
+SELECT * FROM student LIMIT 5; -- 简写
+-- 排序
+SELECT * FROM student ORDER BY score ASC, age DESC;
+-- 分组统计，各班级平均成绩,  sql 内置函数 AVG
+SELECT class as '班级', AVG(score) AS '平均成绩' FROM student GROUP BY class ORDER BY '平均成绩' DESC;
+-- 内置函数，count
+SELECT class as '班级', count(*) as '人数' FROM student GROUP BY class;
+
+-- 分组后还可以进一步过滤，但是不使用 WHERE 而是 HAVING
+SELECT class, AVG(score) AS avg_score FROM student GROUP BY class HAVING avg_score > 82;
+-- 去重
+SELECT DISTINCT class FROM student; 
+
+-- 内置函数
+-- 聚合函数，用于数据的统计，如 AVG, COUNT, SUM, MIN, MAX
+SELECT class AS '班级', AVG(score) AS '平均成绩', COUNT(*) AS '人数', SUM(score) AS '总成绩', MIN(score) AS '最低分', MAX(score) AS '最高分' FROM student GROUP BY class;
+```
