@@ -101,4 +101,34 @@ SELECT DISTINCT class FROM student;
 -- 内置函数
 -- 聚合函数，用于数据的统计，如 AVG, COUNT, SUM, MIN, MAX
 SELECT class AS '班级', AVG(score) AS '平均成绩', COUNT(*) AS '人数', SUM(score) AS '总成绩', MIN(score) AS '最低分', MAX(score) AS '最高分' FROM student GROUP BY class;
+-- 字符串函数，用于处理字符串，如 CONCAT, SUBSTR, LENGTH, UPPER, LOWER
+SELECT CONCAT(class, ' ', name), SUBSTR(name, 2,3), LENGTH(name), UPPER('UPCASE') FROM student;
+-- 数值函数，用于处理数值，如 ROUND, CEIL, FLOOR, ABS, MOD
+SELECT ROUND(AVG(score), 2), CEIL(AVG(score)), FLOOR(AVG(score)), ABS(-1), MOD(5, 2) FROM student GROUP BY class;
+-- 日期函数，如 DATE, TIME, YEAR, MONTH, DAY
+SELECT YEAR('2023-10-08 23:50:10'), MONTH('2023-10-08 23:50:10'), DAY('2023-10-08 23:50:10'), DATE('2023-10-08 23:50:10'), TIME('2023-10-08 23:50:10');
+-- 条件函数，如 IF, CASE
+SELECT name, IF(score >= 80, '及格', '不及格') FROM student;
+SELECT name, score, CASE WHEN score >= 90 THEN '优秀' WHEN score >= 80 THEN '良好' ELSE '及格' END AS '等级' FROM student;
+-- 系统函数, 用于获取系统信息，如 VERSION, DATABASE, USER
+SELECT VERSION(), DATABASE(), USER();
+-- 其他，NULLIF, COALESCE, GREATEST, LEAST
+SELECT NULLIF(1,1), NULLIF(1,2); -- 相等返回 null，不相等返回第一个值
+SELECT COALESCE(null, 1), COALESCE(null, null, 2); -- 返回第一个非 null 值
+SELECT GREATEST(1,2,3), LEAST(1,2,3,4); -- 返回最大、最小值
+-- 类型转换函数，CAST, CONVERT, DATE_FORMAT, STR_TO_DATE
+SELECT GREATEST(1, '12', 3);
+SELECT GREATEST(1, CONVERT('12', SIGNED), 3);
+SELECT GREATEST(1, CAST('12' AS SIGNED), 3);
+-- signed：整型；
+-- unsigned：无符号整型
+-- decimal：浮点型；
+-- char：字符类型；
+-- date：日期类型；
+-- time：时间类型；
+-- datetime：日期时间类型；
+-- binary：二进制类型
+
+SELECT DATE_FORMAT('2022-01-01', '%Y年%m月%d日');
+SELECT STR_TO_DATE('2023-06-01', '%Y-%m-%d');
 ```
