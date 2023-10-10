@@ -293,3 +293,56 @@ select  t.name as 标签名, a.title as 文章标题 from article a
 
 delete from article where id =1;
 
+-- 嵌套查询，查询最高分的姓名和班级
+SELECT name, class, score FROM student WHERE score = (SELECT MAX(score) FROM student);
+-- 查询成绩高于平均分的学生
+select * from student where score > (select avg(score) from student);
+-- EXISTS, NOT EXISTS
+-- EXISTS，对于每个 department 查询它所有的 employee 如果存在员工，则条件成立，返回部门 name
+SELECT name FROM department
+	WHERE EXISTS(
+		SELECT * FROM employee WHERE department.id = employee.department_id
+    );
+    
+SELECT * FROM department
+	WHERE NOT EXISTS (
+		SELECT * FROM employee WHERE department.id = employee.department_id
+    );
+    
+CREATE TABLE product (
+     id INT PRIMARY KEY,
+     name VARCHAR(50),
+     price DECIMAL(10,2),
+     category VARCHAR(50),
+     stock INT
+);
+
+INSERT INTO product (id, name, price, category, stock)
+	VALUES 
+		(1, 'iPhone12',6999.00, '手机',100),
+		(2, 'iPad Pro',7999.00, '平板电脑',50),
+		(3, 'MacBook Pro',12999.00, '笔记本电脑',30),
+		(4, 'AirPods Pro',1999.00, '耳机',200),
+		(5, 'Apple Watch',3299.00, '智能手表',80);
+    
+SELECT name, price FROM product WHERE price = (SELECT MAX(price) FROM product);
+
+create table avg_price_by_category (
+	id int auto_increment,
+    category varchar(50) not null,
+    avg_price decimal(10, 2) not null, -- 共 10 位，小数点后两位
+    primary key (id)
+);
+
+INSERT INTO avg_price_by_category (category, avg_price) 
+	SELECT category, AVG(price) FROM product GROUP BY category;
+
+UPDATE employee SET name = CONCAT('技术-', name)
+	WHERE department_id = (
+		SELECT id FROM department WHERE name ='技术部'
+    );
+    
+DELETE FROM employee WHERE department_id = (
+	SELECT id FROM department WHERE name = '技术部'
+);
+
