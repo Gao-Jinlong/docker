@@ -140,3 +140,67 @@ update orders o set o.total_amount = o.total_amount * 0.9
  join customers on orders.customer_id = customers.id
  where customers.name = '王磊';
  
+-- 事务
+select * from order_items;
+ 
+-- 开启事务
+START TRANSACTION;
+
+UPDATE order_items SET quantity=1 WHERE order_id=3;
+-- 回滚操作
+ROLLBACK;
+
+select * from order_items where order_id=3;
+
+UPDATE orders SET total_amount=200 WHERE id=3;
+
+-- 提交修改，提交后无法回滚
+COMMIT;
+
+select * from orders;
+
+
+-- 回滚记录点
+START TRANSACTION;
+
+SAVEPOINT start_operation;
+
+UPDATE order_items SET quantity=3 WHERE order_id=3;
+
+SAVEPOINT after_update_quantity;
+
+UPDATE orders SET total_amount=600 WHERE id=3;
+
+SAVEPOINT update_finished;
+
+ROLLBACK TO SAVEPOINT after_update_quantity;
+
+ROLLBACK TO SAVEPOINT update_finished;
+
+COMMIT;
+
+-- 当修改多个有关联的表时，事务是必须的，要么全部成功，要么全部失败，保持数据的一致性。
+
+-- 在事务 commit 前，能否看到事务修改的数据？
+-- 事物隔离：
+-- mysql 有四种事务隔离级别
+
+-- READ UNCOMMITTED: 可以读到别的事务尚未提交的数据。
+-- 问题：不可重读——每次独到的数据可能不一致，如果读到的数据被回滚了，读到的就是临时数据，这个问题叫做脏读
+
+-- READ COMMITTED: 只读别的事务已经提交的数据
+-- 不存在脏读的问题，但不可重读的问题仍然存在，不只是数据不一样，有可能两次读取到的记录行数也不一致，称为幻读
+
+-- REPEATABLE READ: 在同一事务内，多次读取数据将保证结果相同
+-- 解决了不可重读的问题，但仍然存在幻读
+
+-- SERIALIZABLE: 在同一时间只允许一个事务修改数据（数据库锁）
+-- 事务一个一个执行，不存在一致性问题，性能很差
+
+-- 四种级别主要是数据一致性和并发性能的差别，一致性越好，并发性能却差
+
+-- 查询当前的事务隔离级别
+select @@transaction_isolation
+-- 一般使用默认值即可
+
+
