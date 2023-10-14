@@ -2,6 +2,10 @@ import 'reflect-metadata';
 import { DataSource } from 'typeorm';
 import { User } from './entity/User';
 import { IdCard } from './entity/IdCard';
+import { Department } from './entity/Department';
+import { Employee } from './entity/Employee';
+import { Article } from './entity/Article';
+import { Tag } from './entity/Tag';
 
 export const AppDataSource = new DataSource({
   type: 'mysql',
@@ -12,7 +16,7 @@ export const AppDataSource = new DataSource({
   database: 'typeorm_test',
   synchronize: true,
   logging: true,
-  entities: [User, IdCard],
+  entities: [User, IdCard, Department, Employee, Article, Tag],
   migrations: [],
   subscribers: [],
   connectorPackage: 'mysql2',

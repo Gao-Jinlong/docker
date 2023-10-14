@@ -17,7 +17,7 @@ export class IdCard {
   })
   cardName: string;
 
-  @JoinColumn()
+  @JoinColumn() // 通过该注解指定外键列
   @OneToOne(() => User, {
     cascade: true, // 一对一关系中，是否创建关联对象
     onDelete: 'CASCADE',
