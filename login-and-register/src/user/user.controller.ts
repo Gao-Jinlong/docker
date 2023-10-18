@@ -6,6 +6,7 @@ import {
   Get,
   UseGuards,
   Req,
+  ValidationPipe,
 } from '@nestjs/common';
 import { TokenPayload, UserService } from './user.service';
 import { LoginDto } from './dto/login.dto';
@@ -19,7 +20,7 @@ export class UserController {
 
   @Post('login')
   async login(
-    @Body() user: LoginDto,
+    @Body(ValidationPipe) user: LoginDto,
     @Res({ passthrough: true }) res: Response,
   ) {
     const token = await this.userService.login(user);
@@ -33,7 +34,7 @@ export class UserController {
   }
 
   @Post('register')
-  async register(@Body() user: RegisterDto) {
+  async register(@Body(ValidationPipe) user: RegisterDto) {
     return await this.userService.register(user);
   }
 
