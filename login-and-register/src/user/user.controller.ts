@@ -45,4 +45,3 @@ export class UserController {
     return await this.userService.detail();
   }
 }
-// 近日懈怠，浅摸一把，劳逸结合，讯息渐进~
