@@ -6,6 +6,7 @@ import { UserModule } from './user/user.module';
 import { User } from './user/entities/user.entity';
 import { Permission } from './user/entities/permission.entity';
 import { DepartmentModule } from './department/department.module';
+import { RedisModule } from './redis/redis.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { DepartmentModule } from './department/department.module';
     }),
     UserModule,
     DepartmentModule,
+    RedisModule,
   ],
   controllers: [AppController],
   providers: [AppService],
