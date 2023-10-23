@@ -8,6 +8,8 @@ import { Permission } from './entities/permission.entity';
 import { LoginDto } from './dto/login.dto';
 import { JwtService } from '@nestjs/jwt';
 import { In } from 'typeorm';
+import { RedisClientType } from 'redis';
+import { REDIS } from '../redis/redis.module';
 
 @Injectable()
 export class UserService {
@@ -15,6 +17,10 @@ export class UserService {
   private jwtService: JwtService;
   @InjectEntityManager()
   private readonly entityManager;
+
+  @Inject(REDIS)
+  private readonly redisClient: RedisClientType;
+
   async initData() {
     const user1 = new User();
     user1.username = '张三';
@@ -108,13 +114,28 @@ export class UserService {
   }
 
   async findAll() {
-    return await this.entityManager.find(User).then((res) => {
+    const USER_LIST = 'userList';
+    let users = await this.redisClient.lRange(USER_LIST, 0, -1);
+
+    if (users.length) {
+      console.log('redis', users);
+      return users.map((item) => JSON.parse(item));
+    }
+    users = await this.entityManager.find(User).then((res) => {
       return res.map((item) => {
         return {
           username: item.username,
         };
       });
     });
+
+    await this.redisClient.lPush(
+      USER_LIST,
+      users.map((item) => JSON.stringify(item)),
+    );
+    this.redisClient.expire(USER_LIST, 60 * 10);
+
+    return users;
   }
 
   async findRolesById(roleIds: number[]) {

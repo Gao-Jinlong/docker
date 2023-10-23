@@ -8,6 +8,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { LoginGuard } from './aop/login/login.guard';
 import { RolesModule } from './module/roles/roles.module';
 import { PermissionGuard } from './aop/permission/permission.guard';
+import { RedisModule } from './module/redis/redis.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { PermissionGuard } from './aop/permission/permission.guard';
     }),
     UserModule,
     RolesModule,
+    RedisModule,
   ],
   controllers: [AppController],
   providers: [
@@ -49,5 +51,6 @@ import { PermissionGuard } from './aop/permission/permission.guard';
       useClass: PermissionGuard,
     },
   ],
+  exports: [JwtModule],
 })
 export class AppModule {}
