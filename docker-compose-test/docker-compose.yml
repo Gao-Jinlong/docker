@@ -11,6 +11,7 @@ services:
       - '3000:3000'
     networks: # 桥接网络
       - common-network
+    restart: 'always' # 重启策略
   mysql-container:
     image: mysql
     ports: 
