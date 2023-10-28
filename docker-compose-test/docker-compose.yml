@@ -1,13 +1,16 @@
+version: '3.8'
 services:
   nest-app:
     build:
       context: ./
       dockerfile: ./Dockerfile
-    depends_on:
+    depends_on: # 依赖容器
       - mysql-container
       - redis-container
     ports:
       - '3000:3000'
+    networks: # 桥接网络
+      - common-network
   mysql-container:
     image: mysql
     ports: 
@@ -15,10 +18,17 @@ services:
     volumes:
       - /Users/gaojinlong/ThisMac/coding/docker/mysql:/var/lib/mysql
     environment:
-      - MYSQL_ROOT_PASSWORD='ginlon'
+      MYSQL_ROOT_PASSWORD: 'ginlon'
+    networks: # 桥接网络
+      - common-network
   redis-container:
     image: redis
     ports:
       - '6379:6379'
     volumes:
       - /Users/gaojinlong/ThisMac/coding/docker/redis:/data
+    networks: # 桥接网络
+      - common-network
+networks: # 桥接网络，不指定也可以 docker 会创建默认的桥接网络
+  common-network:
+    driver: bridge
