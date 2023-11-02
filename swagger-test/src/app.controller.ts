@@ -104,4 +104,14 @@ export class AppController {
     userInfo.age = user.age;
     return userInfo;
   }
+
+  // 通过配置 nest-cli 添加 swagger 插件，可以自动生成 swagger 文档
+  @Get('auto/:name')
+  auto(@Param('name') name: string, @Body() user: UserDto) {
+    console.log('auto', name, user);
+
+    const userInfo = new UserVo();
+
+    return userInfo;
+  }
 }
