@@ -1,34 +1,35 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Inject,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { LoginUserDto } from './dto/login-user.dto';
+import { RedisService } from 'src/redis/redis.service';
 
 @Controller('user')
 export class UserController {
+  @Inject()
+  private redisService: RedisService;
   constructor(private readonly userService: UserService) {}
 
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
-  }
+  @Post('login')
+  async login(@Body() loginUserDto: LoginUserDto) {
+    const { email, code } = loginUserDto;
+    const codeInRedis = await this.redisService.get(`captcha_${email}`);
 
-  @Get()
-  findAll() {
-    return this.userService.findAll();
-  }
+    if (!codeInRedis) {
+      throw new UnauthorizedException('验证码已失效');
+    } else if (code !== codeInRedis) {
+      throw new UnauthorizedException('验证码错误');
+    }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userService.findOne(+id);
-  }
+    const user = await this.userService.findUserByEmail(email);
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(+id, updateUserDto);
-  }
+    console.log(user);
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userService.remove(+id);
+    return 'success';
   }
 }
