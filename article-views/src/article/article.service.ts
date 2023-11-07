@@ -1,26 +1,27 @@
 import { Injectable } from '@nestjs/common';
-import { CreateArticleDto } from './dto/create-article.dto';
-import { UpdateArticleDto } from './dto/update-article.dto';
+import { InjectEntityManager } from '@nestjs/typeorm';
+import { Article } from './entities/article.entity';
 
 @Injectable()
 export class ArticleService {
-  create(createArticleDto: CreateArticleDto) {
-    return 'This action adds a new article';
+  @InjectEntityManager()
+  private readonly entityManager;
+
+  async findOne(id: number) {
+    const article = await this.entityManager.findOneBy(Article, {
+      id,
+    });
+
+    return article;
   }
 
-  findAll() {
-    return `This action returns all article`;
-  }
+  async view(id: number) {
+    const article = await this.findOne(id);
 
-  findOne(id: number) {
-    return `This action returns a #${id} article`;
-  }
+    article.viewCount++;
 
-  update(id: number, updateArticleDto: UpdateArticleDto) {
-    return `This action updates a #${id} article`;
-  }
+    await this.entityManager.save(article);
 
-  remove(id: number) {
-    return `This action removes a #${id} article`;
+    return article.viewCount;
   }
 }
