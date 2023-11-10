@@ -5,9 +5,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
 import { ArticleModule } from './article/article.module';
 import { RedisModule } from './redis/redis.module';
+import { ScheduleModule } from '@nestjs/schedule';
+import { TaskModule } from './task/task.module';
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: 'localhost',
@@ -27,6 +30,7 @@ import { RedisModule } from './redis/redis.module';
     UserModule,
     ArticleModule,
     RedisModule,
+    TaskModule,
   ],
   controllers: [AppController],
   providers: [AppService],

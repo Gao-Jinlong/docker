@@ -1,15 +1,5 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import { Controller, Get, Param, Req, Session } from '@nestjs/common';
 import { ArticleService } from './article.service';
-import { CreateArticleDto } from './dto/create-article.dto';
-import { UpdateArticleDto } from './dto/update-article.dto';
 
 @Controller('article')
 export class ArticleController {
@@ -21,7 +11,7 @@ export class ArticleController {
   }
 
   @Get(':id/view')
-  async view(@Param('id') id: string) {
-    return await this.articleService.view(+id);
+  async view(@Param('id') id: string, @Session() session, @Req() req) {
+    return await this.articleService.view(+id, session?.user?.id || req.ip);
   }
 }

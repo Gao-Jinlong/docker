@@ -13,7 +13,8 @@
       "type": "node",
       "console": "integratedTerminal",
       // 根目录
-      "cwd": "${workspaceFolder}/access_token_and_refresh_token"
+      // "cwd": "${workspaceFolder}/access_token_and_refresh_token"
+      "cwd": "${workspaceFolder}/article-views"
     }
   ]
 }
