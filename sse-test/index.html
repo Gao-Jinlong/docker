@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SSE FRONTEND</title>
+  </head>
+  <body>
+    <div id="msg-container"></div>
+    <div id="buffer-container"></div>
+    <script>
+      const msgContainer = document.querySelector('#msg-container');
+      const eventSource = new EventSource('http://localhost:3000/log');
+
+      eventSource.onmessage = (event) => {
+        const newElement = document.createElement('li');
+
+        newElement.textContent = event.data;
+
+        msgContainer.appendChild(newElement);
+      };
+
+      const bufferContainer = document.querySelector('#buffer-container');
+      const bufferEventSource = new EventSource('http://localhost:3000/buffer');
+
+      bufferEventSource.onmessage = (event) => {
+        const newElement = document.createElement('li');
+
+        newElement.textContent = event.data;
+
+        bufferContainer.appendChild(newElement);
+      };
+    </script>
+  </body>
+</html>
