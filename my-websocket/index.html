@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MyWebSocket</title>
+  </head>
+  <body>
+    <script>
+      const ws = new WebSocket('ws://localhost:8080');
+
+      ws.onopen = function () {
+        console.log('连接已打开...');
+        ws.send('发送数据');
+        setTimeout(() => {
+          console.log('发送数据 2');
+          ws.send('发送数据 2');
+        }, 3000);
+      };
+
+      ws.onmessage = function (evt) {
+        console.log(evt);
+      };
+
+      ws.onclose = function () {
+        console.log('连接已关闭...');
+      };
+    </script>
+  </body>
+</html>
