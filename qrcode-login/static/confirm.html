@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>扫码登入确认</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .info {
+        font-size: 20px;
+        text-align: center;
+        margin-top: 100px;
+      }
+      button {
+        margin-top: 50px;
+        width: 200px;
+        height: 50px;
+        border: none;
+        border-radius: 5px;
+        background-color: #1890ff;
+        color: #fff;
+        font-size: 20px;
+      }
+      button:hover {
+        cursor: pointer;
+        background-color: #40a9ff;
+      }
+      button:active {
+        background-color: #096dd9;
+      }
+    </style>
+  </head>
+  <body>
+    <input type="text" name="username" value="ginlon" />
+    <input type="text" name="password" value="111" />
+    <button id="login">登入账户</button>
+
+    <div class="info">是否确认登入？</div>
+    <button id="confirm">确认登入</button>
+    <button id="cancel">取消</button>
+
+    <script>
+      const params = new URLSearchParams(window.location.search.slice(1));
+
+      const qrcode_id = params.get('id');
+
+      fetch('http://localhost:3000/qrcode/scan?id=' + qrcode_id).then((res) => {
+        console.log(res);
+      });
+
+      let token = '';
+      document.querySelector('#login').addEventListener('click', () => {
+        const username = document.querySelector('input[name="username"]').value;
+        const password = document.querySelector('input[name="password"]').value;
+
+        fetch(
+          'http://localhost:3000/login?username=' +
+            username +
+            '&password=' +
+            password,
+        )
+          .then((res) => res.json())
+          .then((res) => {
+            token = res.token;
+            console.log(token);
+          });
+      });
+
+      document.getElementById('confirm').addEventListener('click', () => {
+        fetch('http://localhost:3000/qrcode/confirm?id=' + qrcode_id, {
+          headers: {
+            Authorization: 'Bearer ' + token,
+          },
+        })
+          .then((res) => res.json())
+          .then((res) => {
+            console.log(res);
+            if (res.status === 'ok') {
+              alert('登入成功');
+              const div = document.createElement('div');
+              div.innerText = JSON.stringify(res.user);
+              document.body.appendChild(div);
+            } else {
+              alert('登入失败');
+            }
+          });
+      });
+
+      document.getElementById('cancel').addEventListener('click', () => {
+        fetch('http://localhost:3000/qrcode/cancel?id=' + qrcode_id)
+          .then((res) => res.json())
+          .then((res) => {
+            if (res.data === 'ok') {
+              alert('取消成功');
+            } else {
+              alert('取消失败');
+            }
+          });
+      });
+    </script>
+  </body>
+</html>
