@@ -9,15 +9,14 @@
   </head>
   <body>
     <input id="fileInput" type="file" multiple />
+    <progress id="progress" value="0" max="100"></progress>
     <script>
       const fileInput = document.querySelector('#fileInput');
 
-      const chunkSize = 20 * 2 ** 10; // 1KB
+      const chunkSize = 1 * 2 ** 20; // 1KB
 
       fileInput.onchange = async function () {
         const file = fileInput.files[0];
-
-        console.log(file);
 
         const chunks = [];
 
@@ -31,14 +30,33 @@
         const uniqueCode = Math.random().toString(36).slice(2, 8);
 
         const tasks = [];
+        let count = 0;
         chunks.map((chunk, index) => {
           const data = new FormData();
           data.set('name', uniqueCode + '_' + file.name + '-' + index);
           data.append('files', chunk);
-          tasks.push(axios.post('http://localhost:3000/upload', data));
+          tasks.push(
+            axios
+              .post('http://localhost:3000/upload', data, {
+                onUploadProgress: function (axiosProgressEvent) {
+                  const progress = Math.round(
+                    ((count * chunkSize + axiosProgressEvent.loaded) /
+                      file.size) *
+                      100,
+                  );
+                  document.querySelector('#progress').value = progress;
+                },
+              })
+              .then(() => {
+                count++;
+              }),
+          );
         });
 
         await Promise.all(tasks);
+
+        document.querySelector('#progress').value = 100;
+
         axios.get('http://localhost:3000/merge', {
           params: {
             name: uniqueCode + '_' + file.name,
