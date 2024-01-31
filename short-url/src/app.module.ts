@@ -2,11 +2,14 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UniqueCode } from './entities/UniqueCode';
+import { UniqueCode } from './entities/UniqueCode.entity';
 import { UniqueCodeService } from './unique-code.service';
+import { ScheduleModule } from '@nestjs/schedule';
+import { ShortLongMapService } from './short-long-map.service';
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: 'localhost',
@@ -16,7 +19,7 @@ import { UniqueCodeService } from './unique-code.service';
       database: 'short-url',
       synchronize: true,
       logging: true,
-      entities: [UniqueCode],
+      entities: ['dist/**/*.entity{.ts,.js}'],
       poolSize: 10,
       connectorPackage: 'mysql2',
       extra: {
@@ -25,6 +28,6 @@ import { UniqueCodeService } from './unique-code.service';
     }),
   ],
   controllers: [AppController],
-  providers: [AppService, UniqueCodeService],
+  providers: [AppService, UniqueCodeService, ShortLongMapService],
 })
 export class AppModule {}

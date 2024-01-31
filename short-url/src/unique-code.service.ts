@@ -2,14 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { InjectEntityManager } from '@nestjs/typeorm';
 import { EntityManager } from 'typeorm';
 import { generateRandomStr } from './utils';
-import { UniqueCode } from './entities/UniqueCode';
+import { UniqueCode } from './entities/UniqueCode.entity';
+import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Injectable()
 export class UniqueCodeService {
   @InjectEntityManager()
   private entityManager: EntityManager;
 
-  async generateCode() {
+  async generateCode(): Promise<UniqueCode> {
     const str = generateRandomStr(6);
 
     const uniqueCode = await this.entityManager.findOneBy(UniqueCode, {
@@ -21,9 +22,23 @@ export class UniqueCodeService {
       codeInstance.code = str;
       codeInstance.status = 0;
 
-      return await this.entityManager.insert(UniqueCode, codeInstance);
+      return codeInstance;
     } else {
-      return this.generateCode();
+      return await this.generateCode();
     }
+  }
+
+  @Cron(CronExpression.EVERY_DAY_AT_4AM)
+  async batchGenerateCode() {
+    const results: UniqueCode[] = [];
+    const queue: Promise<UniqueCode>[] = [];
+    for (let i = 0; i < 100; i++) {
+      queue.push(this.generateCode());
+    }
+    await Promise.all(queue).then((res) => {
+      results.push(...res);
+    });
+
+    await this.entityManager.save(UniqueCode, results);
   }
 }
