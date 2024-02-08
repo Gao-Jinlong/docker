@@ -11,7 +11,12 @@ const prisma = new PrismaClient({
 
 async function main() {
   await findTest();
-  await updateTest();
+  // await updateTest();
+  await upsert();
+  // await deleteTest();
+  await countTest();
+  await aggregateTest();
+  await groupByTest();
 }
 main();
 
@@ -101,4 +106,111 @@ async function updateTest() {
     },
   });
   console.log('updateMany', updateMany);
+}
+
+async function upsert() {
+  const res = await prisma.aaa.upsert({
+    where: {
+      id: 11,
+    },
+    update: {
+      email: 'yyy@xx.com',
+    },
+    create: {
+      id: 11,
+      name: 'xx',
+      email: 'xxx@xx.com',
+    },
+  });
+}
+
+async function deleteTest() {
+  await prisma.aaa.delete({
+    where: { id: 1 },
+  });
+
+  await prisma.aaa.deleteMany({
+    where: {
+      id: {
+        in: [11, 2],
+      },
+    },
+  });
+}
+
+async function countTest() {
+  const res = await prisma.aaa.count({
+    where: {
+      email: {
+        contains: 'xx',
+      },
+    },
+    orderBy: {
+      name: 'desc',
+    },
+    skip: 2,
+    take: 3,
+  });
+  console.log('res', res);
+}
+
+async function aggregateTest() {
+  await prisma.aaa.update({
+    where: {
+      id: 3,
+    },
+    data: {
+      age: 3,
+    },
+  });
+  await prisma.aaa.update({
+    where: {
+      id: 5,
+    },
+    data: {
+      age: 5,
+    },
+  });
+
+  const res = await prisma.aaa.aggregate({
+    where: {
+      email: {
+        contains: '@',
+      },
+    },
+    _count: {
+      _all: true,
+    },
+    _max: {
+      age: true,
+    },
+    _min: {
+      age: true,
+    },
+    _avg: {
+      age: true,
+    },
+  });
+  console.log('res', res);
+}
+
+async function groupByTest() {
+  const res = await prisma.aaa.groupBy({
+    by: ['email'],
+    _count: {
+      _all: true,
+    },
+    _sum: {
+      age: true,
+    },
+    having: {
+      age: {
+        _avg: {
+          gt: 2,
+        },
+      },
+    },
+  });
+
+  console.log('groupBy', res);
 }
