@@ -143,3 +143,5 @@ async function rawSQLTest() {
   const res = await prisma.$queryRaw`select * from Department`;
   console.log('res', res);
 }
+
+// happy new year
