@@ -15,7 +15,8 @@
       // 根目录
       // "cwd": "${workspaceFolder}/access_token_and_refresh_token"
       // "cwd": "${workspaceFolder}/article-views"
-      "cwd": "${workspaceFolder}/schedule-task"
+      // "cwd": "${workspaceFolder}/schedule-task"
+      "cwd": "${workspaceFolder}/debug-nest-source"
     }
   ]
 }
